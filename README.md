@@ -2,6 +2,10 @@
 
 A helper library to support NTLM and Cookies authentication with [ews-javascript-api](https://github.com/gautamsi/ews-javascript-api)
 
+## Install
+
+`npm install ews-javascript-api-auth --save`
+
 # How to
 ## NTLM Authentication or Windows Integrated Authentication with Exchange Web Service
 
