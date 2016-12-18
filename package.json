@@ -2,7 +2,7 @@
   "name": "ews-javascript-api-auth",
   "version": "1.0.0",
   "description": "Library to Help with non-Basic Authentication methods with ews-javascript-api package",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
