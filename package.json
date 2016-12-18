@@ -1,0 +1,26 @@
+{
+  "name": "ews-javascript-api-auth",
+  "version": "1.0.0",
+  "description": "Library to Help with non-Basic Authentication methods with ews-javascript-api package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gautamsi/ews-javascript-api-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gautamsi/ews-javascript-api-auth/issues"
+  },
+  "homepage": "https://github.com/gautamsi/ews-javascript-api-auth",
+  "author": "Gautam Singh (@gautamsi)",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bluebird": "^3.0.36",
+    "@types/node": "^6.0.52",
+    "bluebird": "^3.4.6",
+    "fetch": "^1.0.1",
+    "httpntlm": "^1.6.1"
+  }
+}
