@@ -1,5 +1,5 @@
 "use strict";
-var fetch_1 = require('fetch');
+var fetch_1 = require("fetch");
 var Promise = require("bluebird");
 var https_1 = require("https");
 //var {createType1Message, decodeType2Message, createType3Message} = require("ntlm-client") // info: also possible to use this package in node.
@@ -8,13 +8,15 @@ var ntlm = require('httpntlm').ntlm;
 // var keepaliveAgent = new HttpsAgent(); // new HttpsAgent({ keepAliveMsecs :10000}); need to add more seconds to keepalive for debugging time. debugging is advised on basic auth only
 /** @internal */
 var ntlmAuthXhrApi = (function () {
-    function ntlmAuthXhrApi(username, password) {
+    function ntlmAuthXhrApi(username, password, allowUntrustedCertificate) {
+        if (allowUntrustedCertificate === void 0) { allowUntrustedCertificate = false; }
         this.stream = null;
         this.username = null;
         this.password = null;
         this.domain = '.';
         this.username = username;
         this.password = password;
+        this.allowUntrustedCertificate = allowUntrustedCertificate;
         if (username.indexOf("\\") > 0) {
             this.username = username.split("\\")[1];
             this.domain = username.split("\\")[0];
@@ -35,7 +37,7 @@ var ntlmAuthXhrApi = (function () {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new https_1.Agent({ keepAlive: true }) //keepaliveAgent
+            agent: new https_1.Agent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         };
         return new Promise(function (resolve, reject) {
             _this.ntlmPreCall(options).then(function (optionsWithNtlmHeader) {
@@ -74,7 +76,7 @@ var ntlmAuthXhrApi = (function () {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new https_1.Agent({ keepAlive: true }) //keepaliveAgent
+            agent: new https_1.Agent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         };
         return new Promise(function (resolve, reject) {
             _this.ntlmPreCall(options).then(function (optionsWithNtlmHeader) {

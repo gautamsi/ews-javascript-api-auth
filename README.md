@@ -24,6 +24,10 @@ var ewsAuth = require("ews-javascript-api-auth");
 ews.ConfigurationApi.ConfigureXHR(new ewsAuth.ntlmAuthXhrApi(credentials.userName, credentials.password));
 // ------------rest of code----------------
 ```
+> as of version 1.1.0 you can pass `true` as third parameter to the constructer to bypass certificate errors, Note: To be used only for testing and debugging, not suitable for production environment. 
+>
+>This should only be needed for ntlm authentication, other scenarios should be fine with use of `process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";` in the calling library.
+
 
 ## Cookies Auth using TMG/ISA
 

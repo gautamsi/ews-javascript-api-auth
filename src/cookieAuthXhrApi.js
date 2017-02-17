@@ -1,5 +1,5 @@
 "use strict";
-var fetch_1 = require('fetch');
+var fetch_1 = require("fetch");
 var Promise = require("bluebird");
 var cookieAuthXhrApi = (function () {
     function cookieAuthXhrApi(username, password) {

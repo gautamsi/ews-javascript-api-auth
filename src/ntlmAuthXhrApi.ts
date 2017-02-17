@@ -18,15 +18,17 @@ export class ntlmAuthXhrApi implements IXHRApi {
     private username: string = null
     private password: string = null
     private domain: string = '.'
+    private allowUntrustedCertificate: boolean;
 
     get apiName(): string {
         return "ntlm";
     }
 
-    constructor(username: string, password: string) {
+    constructor(username: string, password: string, allowUntrustedCertificate: boolean = false) {
 
         this.username = username;
         this.password = password;
+        this.allowUntrustedCertificate = allowUntrustedCertificate;
 
         if (username.indexOf("\\") > 0) {
             this.username = username.split("\\")[1];
@@ -42,7 +44,7 @@ export class ntlmAuthXhrApi implements IXHRApi {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new httpsAgent({ keepAlive: true }) //keepaliveAgent
+            agent: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
@@ -85,7 +87,7 @@ export class ntlmAuthXhrApi implements IXHRApi {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new httpsAgent({ keepAlive: true }) //keepaliveAgent
+            agent: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {

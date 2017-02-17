@@ -7,8 +7,9 @@ export declare class ntlmAuthXhrApi implements IXHRApi {
     private username;
     private password;
     private domain;
+    private allowUntrustedCertificate;
     readonly apiName: string;
-    constructor(username: string, password: string);
+    constructor(username: string, password: string, allowUntrustedCertificate?: boolean);
     xhr(xhroptions: IXHROptions, progressDelegate?: (progressData: IXHRProgress) => void): Promise<XMLHttpRequest>;
     xhrStream(xhroptions: IXHROptions, progressDelegate: (progressData: IXHRProgress) => void): Promise<XMLHttpRequest>;
     disconnect(): void;
