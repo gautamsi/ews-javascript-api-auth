@@ -1,6 +1,7 @@
 "use strict";
 var fetch_1 = require("fetch");
 var Promise = require("bluebird");
+var utils_1 = require("./utils");
 var https_1 = require("https");
 //var {createType1Message, decodeType2Message, createType3Message} = require("ntlm-client") // info: also possible to use this package in node.
 var ntlm = require('httpntlm').ntlm;
@@ -58,10 +59,10 @@ var ntlmAuthXhrApi = (function () {
                             statusText: undefined,
                         };
                         if (xhrResponse.status === 200) {
-                            resolve(_this.setupXhrResponse(xhrResponse));
+                            resolve(utils_1.setupXhrResponse(xhrResponse));
                         }
                         else {
-                            reject(_this.setupXhrResponse(xhrResponse));
+                            reject(utils_1.setupXhrResponse(xhrResponse));
                         }
                     }
                 });
@@ -153,26 +154,6 @@ var ntlmAuthXhrApi = (function () {
             options.headers['Connection'] = 'Close';
             return options;
         });
-    };
-    ntlmAuthXhrApi.prototype.setupXhrResponse = function (xhrResponse) {
-        xhrResponse["responseText"] = xhrResponse.response;
-        delete xhrResponse["response"];
-        xhrResponse.getAllResponseHeaders = function () {
-            var header = "";
-            if (xhrResponse.headers) {
-                for (var key in xhrResponse.headers) {
-                    header += key + " : " + xhrResponse.headers[key] + "\r\n";
-                }
-            }
-            return header;
-        };
-        xhrResponse.getResponseHeader = function (header) {
-            if (xhrResponse.headers && xhrResponse.headers[header]) {
-                return xhrResponse.headers[header];
-            }
-            return null;
-        };
-        return xhrResponse;
     };
     return ntlmAuthXhrApi;
 }());

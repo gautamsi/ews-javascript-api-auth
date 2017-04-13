@@ -1,6 +1,7 @@
 import { FetchStream, fetchUrl, Meta } from 'fetch';
 import * as  Promise from "bluebird";
 import { IXHROptions, IXHRApi, IXHRProgress } from "./ews.partial";
+import { setupXhrResponse } from "./utils";
 
 export class cookieAuthXhrApi implements IXHRApi {
 
@@ -65,10 +66,10 @@ export class cookieAuthXhrApi implements IXHRApi {
                             statusText: undefined,
                         };
                         if (xhrResponse.status === 200) {
-                            resolve(this.setupXhrResponse(xhrResponse));
+                            resolve(setupXhrResponse(xhrResponse));
                         }
                         else {
-                            reject(this.setupXhrResponse(xhrResponse));
+                            reject(setupXhrResponse(xhrResponse));
                         }
                     }
                 });
@@ -171,29 +172,6 @@ export class cookieAuthXhrApi implements IXHRApi {
                 resolve();
             }
         });
-    }
-
-    private setupXhrResponse(xhrResponse: XMLHttpRequest): XMLHttpRequest {
-        xhrResponse[<any>"responseText"] = xhrResponse.response;
-        delete xhrResponse["response"];
-        xhrResponse.getAllResponseHeaders = function () {
-            var header = "";
-            if ((<any>xhrResponse).headers) {
-                for (var key in (<any>xhrResponse).headers) {
-                    header += key + " : " + (<any>xhrResponse).headers[key] + "\r\n";
-                }
-            }
-            return header;
-        };
-
-        xhrResponse.getResponseHeader = (header: string) => {
-            if ((<any>xhrResponse).headers && (<any>xhrResponse).headers[header]) {
-                return (<any>xhrResponse).headers[header];
-            }
-            return null;
-        }
-
-        return xhrResponse;
     }
 
     private static parseString(url: string) {
