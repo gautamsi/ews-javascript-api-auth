@@ -1,6 +1,6 @@
 {
   "name": "ews-javascript-api-auth",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Library to Help with non-Basic Authentication methods with ews-javascript-api package",
   "main": "src/index.js",
   "scripts": {
@@ -21,6 +21,6 @@
     "@types/node": "^6.0.52",
     "bluebird": "^3.4.6",
     "fetch": "^1.0.1",
-    "httpntlm": "^1.6.1"
+    "ntlm-client": "~0.1.1"
   }
 }
