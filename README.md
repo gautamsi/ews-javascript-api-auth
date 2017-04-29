@@ -24,9 +24,9 @@ var ewsAuth = require("ews-javascript-api-auth");
 ews.ConfigurationApi.ConfigureXHR(new ewsAuth.ntlmAuthXhrApi(credentials.userName, credentials.password));
 // ------------rest of code----------------
 ```
-> as of version 1.2.0 NTLMv2 is supported. NTLMv2 support is limited to **"domain\username"** style user name parameter only, UPN (user@domain.com) is not supported yet. 
->  1.2.0 removes `httpntlm` package and usage `ntlm-client` due to lack of NTLMv2 support in `httpntlm`
->
+> 1.2.0 adds support for NTLMv2. 
+> 1.2.0 removes `httpntlm` package and usage `ntlm-client` due to lack of NTLMv2 support in `httpntlm`
+> 
 > as of version 1.1.0 you can pass `true` as third parameter to the constructer to bypass certificate errors, Note: To be used only for testing and debugging, not suitable for production environment. 
 >
 >This should only be needed for ntlm authentication, other scenarios should be fine with use of `process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";` in the calling library.
