@@ -1,6 +1,7 @@
 "use strict";
 var fetch_1 = require("fetch");
 var Promise = require("bluebird");
+var utils_1 = require("./utils");
 var cookieAuthXhrApi = (function () {
     function cookieAuthXhrApi(username, password) {
         this.stream = null;
@@ -61,10 +62,10 @@ var cookieAuthXhrApi = (function () {
                             statusText: undefined,
                         };
                         if (xhrResponse.status === 200) {
-                            resolve(_this.setupXhrResponse(xhrResponse));
+                            resolve(utils_1.setupXhrResponse(xhrResponse));
                         }
                         else {
-                            reject(_this.setupXhrResponse(xhrResponse));
+                            reject(utils_1.setupXhrResponse(xhrResponse));
                         }
                     }
                 });
@@ -159,26 +160,6 @@ var cookieAuthXhrApi = (function () {
                 resolve();
             }
         });
-    };
-    cookieAuthXhrApi.prototype.setupXhrResponse = function (xhrResponse) {
-        xhrResponse["responseText"] = xhrResponse.response;
-        delete xhrResponse["response"];
-        xhrResponse.getAllResponseHeaders = function () {
-            var header = "";
-            if (xhrResponse.headers) {
-                for (var key in xhrResponse.headers) {
-                    header += key + " : " + xhrResponse.headers[key] + "\r\n";
-                }
-            }
-            return header;
-        };
-        xhrResponse.getResponseHeader = function (header) {
-            if (xhrResponse.headers && xhrResponse.headers[header]) {
-                return xhrResponse.headers[header];
-            }
-            return null;
-        };
-        return xhrResponse;
     };
     cookieAuthXhrApi.parseString = function (url) {
         var regex = RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");

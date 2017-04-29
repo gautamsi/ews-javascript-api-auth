@@ -12,6 +12,5 @@ export declare class cookieAuthXhrApi implements IXHRApi {
     xhrStream(xhroptions: IXHROptions, progressDelegate: (progressData: IXHRProgress) => void): Promise<XMLHttpRequest>;
     disconnect(): void;
     private cookiesPreCall(options);
-    private setupXhrResponse(xhrResponse);
     private static parseString(url);
 }

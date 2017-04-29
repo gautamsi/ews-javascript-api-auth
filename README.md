@@ -57,3 +57,6 @@ require `ews-javascript-api` version `0.9`
 ## License
 MIT
 
+### 1.1.1 changes
+* fixed header check to be case insensitive
+* moved header helper method creation to util.js

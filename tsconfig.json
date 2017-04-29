@@ -2,7 +2,8 @@
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
-        "declaration": true
+        "declaration": true, 
+        "stripInternal": true
     },
     "exclude": [
         "node_modules"
