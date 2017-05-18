@@ -5,9 +5,9 @@ import {setupXhrResponse} from "./utils";
 
 import { Agent as httpsAgent } from "https";
 
-//var {createType1Message, decodeType2Message, createType3Message} = require("ntlm-client") // info: also possible to use this package in node.
+var { createType1Message, decodeType2Message, createType3Message } = require("ntlm-client") //ref: has NTLM v2 support // info: also possible to use this package in node.
 
-var ntlm = require('httpntlm').ntlm;
+//var ntlm = require('httpntlm').ntlm; //removing httpntlm due to lack of NTLM v2
 
 // var HttpsAgent = require('agentkeepalive').HttpsAgent; // can use this instead of node internal http agent
 // var keepaliveAgent = new HttpsAgent(); // new HttpsAgent({ keepAliveMsecs :10000}); need to add more seconds to keepalive for debugging time. debugging is advised on basic auth only
@@ -16,9 +16,9 @@ var ntlm = require('httpntlm').ntlm;
 export class ntlmAuthXhrApi implements IXHRApi {
 
     private stream: FetchStream = null;
-    private username: string = null
-    private password: string = null
-    private domain: string = '.'
+    private username: string = null;
+    private password: string = null;
+    private domain: string = '';
     private allowUntrustedCertificate: boolean;
 
     get apiName(): string {
@@ -27,13 +27,13 @@ export class ntlmAuthXhrApi implements IXHRApi {
 
     constructor(username: string, password: string, allowUntrustedCertificate: boolean = false) {
 
-        this.username = username;
-        this.password = password;
+        this.username = username || '';
+        this.password = password || '';
         this.allowUntrustedCertificate = allowUntrustedCertificate;
 
         if (username.indexOf("\\") > 0) {
             this.username = username.split("\\")[1];
-            this.domain = username.split("\\")[0];
+            this.domain = username.split("\\")[0].toUpperCase();
         }
     }
 
@@ -142,8 +142,8 @@ export class ntlmAuthXhrApi implements IXHRApi {
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
 
-            let type1msg = ntlm.createType1Message(ntlmOptions);
-            //let type1msg = createType1Message(ntlmOptions.workstation, ntlmOptions.url); // alternate client
+            //let type1msg = ntlm.createType1Message(ntlmOptions); //lack of v2
+            let type1msg = createType1Message(ntlmOptions.workstation, ntlmOptions.domain); // alternate client - ntlm-client
 
             options.headers['Authorization'] = type1msg;
             options.headers['Connection'] = 'keep-alive';
@@ -169,10 +169,10 @@ export class ntlmAuthXhrApi implements IXHRApi {
             if (!res.headers['www-authenticate'])
                 throw new Error('www-authenticate not found on response of second request');
 
-            let type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
-            let type3msg = ntlm.createType3Message(type2msg, ntlmOptions);
-            // let type2msg = decodeType2Message(res.headers['www-authenticate']); //with ntlm-client
-            // let type3msg = createType3Message(type2msg, username, password); //with ntlm-client
+            //let type2msg = ntlm.parseType2Message(res.headers['www-authenticate']); //httpntlm
+            //let type3msg = ntlm.createType3Message(type2msg, ntlmOptions); //httpntlm
+            let type2msg = decodeType2Message(res.headers['www-authenticate']); //with ntlm-client
+            let type3msg = createType3Message(type2msg, ntlmOptions.username, ntlmOptions.password, ntlmOptions.workstation, ntlmOptions.domain); //with ntlm-client
 
             delete options.headers['authorization'] // 'fetch' has this wired addition with lower case, with lower case ntlm on server side fails
             delete options.headers['connection'] // 'fetch' has this wired addition with lower case, with lower case ntlm on server side fails

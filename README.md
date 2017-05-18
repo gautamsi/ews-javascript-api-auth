@@ -6,7 +6,7 @@ A helper library to support NTLM and Cookies authentication with [ews-javascript
 
 `npm install ews-javascript-api-auth --save`
 
-> 1.2.0 adds support for NTLMv2 (awaiting pull request merge in node-ntlm-client repo). install using tag for NTLMv2 support `npm install ews-javascript-api-auth@ntlmv2`.  1.2.0 removes `httpntlm` package and usage `ntlm-client` due to lack of NTLMv2 support in `httpntlm`
+> 1.2.0 adds support for NTLMv2 (awaiting pull request merge in node-ntlm-client repo, using git install from gihub repo). 1.2.0 removes `httpntlm` package and usage `ntlm-client` due to lack of NTLMv2 support in `httpntlm`
 
 # How to
 ## NTLM Authentication or Windows Integrated Authentication with Exchange Web Service
