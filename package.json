@@ -1,6 +1,6 @@
 {
-  "name": "ews-javascript-api-auth",
-  "version": "1.2.0",
+  "name": "ews-javascript-api-xhr",
+  "version": "0.2.0",
   "description": "Library to Help with non-Basic Authentication methods with ews-javascript-api package",
   "main": "src/index.js",
   "scripts": {
@@ -19,10 +19,12 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "fetch": "^1.0.1",
-    "ntlm-client": "git+https://git@github.com/gautamsi/node-ntlm-client.git"
+    "ntlm-client": "git+https://git@github.com/gautamsi/node-ntlm-client.git",
+    "request-promise": "^4.2.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.36",
-    "@types/node": "^6.0.52"    
+    "@types/node": "^6.0.52",
+    "@types/request-promise": "^4.1.36"
   }
 }
