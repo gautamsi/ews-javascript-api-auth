@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var request = require("request-promise");
+var request = require("request");
 var Promise = require("bluebird");
 var utils_1 = require("./utils");
 /** @internal */
@@ -37,50 +37,52 @@ var proxySupportedXhrApi = (function () {
             headers: xhroptions.headers,
             method: xhroptions.type,
             followRedirect: false,
-            resolveWithFullResponse: true
         };
         var proxyStr = this.getProxyString();
         if (proxyStr) {
             options["proxy"] = proxyStr;
         }
         return new Promise(function (resolve, reject) {
-            request(options).then(function (result) {
-                var xhrResponse = {
-                    response: result.body.toString(),
-                    status: result.statusCode,
-                    //redirectCount: meta.redirectCount,
-                    headers: result.headers,
-                    finalUrl: result.url,
-                    responseType: '',
-                    statusText: undefined,
-                };
-                if (xhrResponse.status === 200) {
-                    resolve(utils_1.setupXhrResponse(xhrResponse));
-                }
-                else {
+            request(options, function (err, response, body) {
+                if (err) {
+                    var xhrResponse = {
+                        response: err.response && err.response.body ? err.response.body.toString() : '',
+                        status: err.statusCode,
+                        //redirectCount: meta.redirectCount,
+                        headers: err.response ? err.response.headers : {},
+                        finalUrl: err.url,
+                        responseType: '',
+                        statusText: err.message,
+                        message: err.message
+                    };
+                    if (typeof xhrResponse.status === 'undefined' && err.message) {
+                        try {
+                            var parse = err.message.match(/statusCode=(\d*?)$/);
+                            if (parse && parse.length > 1) {
+                                xhrResponse["status"] = Number(parse[1]);
+                            }
+                        }
+                        catch (e) { }
+                    }
                     reject(utils_1.setupXhrResponse(xhrResponse));
                 }
-            }, function (reason) {
-                var xhrResponse = {
-                    response: reason.response && reason.response.body ? reason.response.body.toString() : '',
-                    status: reason.statusCode,
-                    //redirectCount: meta.redirectCount,
-                    headers: reason.response ? reason.response.headers : {},
-                    finalUrl: reason.url,
-                    responseType: '',
-                    statusText: reason.message,
-                    message: reason.message
-                };
-                if (typeof xhrResponse.status === 'undefined' && reason.message) {
-                    try {
-                        var parse = reason.message.match(/statusCode=(\d*?)$/);
-                        if (parse && parse.length > 1) {
-                            xhrResponse["status"] = Number(parse[1]);
-                        }
+                else {
+                    var xhrResponse = {
+                        response: body ? body.toString() : '',
+                        status: response.statusCode,
+                        //redirectCount: meta.redirectCount,
+                        headers: response.headers,
+                        finalUrl: response.url,
+                        responseType: '',
+                        statusText: response.statusMessage,
+                    };
+                    if (xhrResponse.status === 200) {
+                        resolve(utils_1.setupXhrResponse(xhrResponse));
                     }
-                    catch (e) { }
+                    else {
+                        reject(utils_1.setupXhrResponse(xhrResponse));
+                    }
                 }
-                reject(utils_1.setupXhrResponse(xhrResponse));
             });
         });
     };
@@ -93,10 +95,12 @@ var proxySupportedXhrApi = (function () {
             headers: xhroptions.headers,
             method: xhroptions.type,
             followRedirect: false,
-            resolveWithFullResponse: true
         };
+        var proxyStr = this.getProxyString();
+        if (proxyStr) {
+            options["proxy"] = proxyStr;
+        }
         return new Promise(function (resolve, reject) {
-            var request = require('request');
             _this.stream = request(options);
             _this.stream.on('response', function (response) {
                 // unmodified http.IncomingMessage object

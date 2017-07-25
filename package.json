@@ -20,11 +20,11 @@
     "bluebird": "^3.4.6",
     "fetch": "^1.0.1",
     "ntlm-client": "git+https://git@github.com/gautamsi/node-ntlm-client.git",
-    "request-promise": "^4.2.1"
+    "request": "^2.81.0"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.36",
     "@types/node": "^6.0.52",
-    "@types/request-promise": "^4.1.36"
+    "@types/request": "^2.0.0"
   }
 }

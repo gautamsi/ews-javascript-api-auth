@@ -1,10 +1,10 @@
-import * as request from 'request-promise';
+import * as request from 'request';
 import * as  Promise from "bluebird";
 import { IXHROptions, IXHRApi, IXHRProgress } from "./ews.partial";
 import { setupXhrResponse } from "./utils";
 
 import { Agent as httpsAgent } from "https";
-
+import { ClientResponse } from "http"
 
 
 /** @internal */
@@ -48,7 +48,7 @@ export class proxySupportedXhrApi implements IXHRApi {
             headers: xhroptions.headers,
             method: <any>xhroptions.type,
             followRedirect: false,
-            resolveWithFullResponse: true
+            //resolveWithFullResponse: true
         }
 
         let proxyStr = this.getProxyString();
@@ -57,45 +57,47 @@ export class proxySupportedXhrApi implements IXHRApi {
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
-            request(options).then<XMLHttpRequest>((result) => {
-                let xhrResponse: XMLHttpRequest = <any>{
-                    response: result.body.toString(),
-                    status: result.statusCode,
-                    //redirectCount: meta.redirectCount,
-                    headers: result.headers,
-                    finalUrl: result.url,
-                    responseType: '',
-                    statusText: undefined,
-                };
-                if (xhrResponse.status === 200) {
-                    resolve(setupXhrResponse(xhrResponse));
-                }
-                else {
+            request(options, (err, response, body) => {
+
+                if (err) {
+                    let xhrResponse: XMLHttpRequest = <any>{
+                        response: err.response && err.response.body ? err.response.body.toString() : '',
+                        status: err.statusCode,
+                        //redirectCount: meta.redirectCount,
+                        headers: err.response ? err.response.headers : {},
+                        finalUrl: err.url,
+                        responseType: '',
+                        statusText: err.message,
+                        message: err.message
+                    };
+                    if (typeof xhrResponse.status === 'undefined' && err.message) {
+                        try {
+                            let parse: any[] = err.message.match(/statusCode=(\d*?)$/)
+                            if (parse && parse.length > 1) {
+                                xhrResponse[<any>"status"] = Number(parse[1]);
+                            }
+                        } catch (e) { }
+                    }
                     reject(setupXhrResponse(xhrResponse));
                 }
-
-            }, (reason) => {
-                let xhrResponse: XMLHttpRequest = <any>{
-                    response: reason.response && reason.response.body ? reason.response.body.toString() : '',
-                    status: reason.statusCode,
-                    //redirectCount: meta.redirectCount,
-                    headers: reason.response ? reason.response.headers : {},
-                    finalUrl: reason.url,
-                    responseType: '',
-                    statusText: reason.message,
-                    message: reason.message
-                };
-                if (typeof xhrResponse.status === 'undefined' && reason.message) {
-                    try {
-                        let parse: any[] = reason.message.match(/statusCode=(\d*?)$/)
-                        if (parse && parse.length > 1) {
-                            xhrResponse[<any>"status"] = Number(parse[1]);
-                        }
-                    } catch (e) { }
+                else {
+                    let xhrResponse: XMLHttpRequest = <any>{
+                        response: body ? body.toString() : '',
+                        status: response.statusCode,
+                        //redirectCount: meta.redirectCount,
+                        headers: response.headers,
+                        finalUrl: response.url,
+                        responseType: '',
+                        statusText: response.statusMessage,
+                    };
+                    if (xhrResponse.status === 200) {
+                        resolve(setupXhrResponse(xhrResponse));
+                    }
+                    else {
+                        reject(setupXhrResponse(xhrResponse));
+                    }
                 }
-                reject(setupXhrResponse(xhrResponse));
             });
-
         });
 
     }
@@ -109,14 +111,17 @@ export class proxySupportedXhrApi implements IXHRApi {
             headers: xhroptions.headers,
             method: <any>xhroptions.type,
             followRedirect: false,
-            resolveWithFullResponse: true
+            
+        }
+
+        let proxyStr = this.getProxyString();
+        if (proxyStr) {
+            options["proxy"] = proxyStr;
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
-            var request = require('request')
-            this.stream = request(
-                options
-            );
+
+            this.stream = request(options);
 
             this.stream.on('response', function (response) {
                 // unmodified http.IncomingMessage object
@@ -186,59 +191,4 @@ export class proxySupportedXhrApi implements IXHRApi {
         }
         return null;
     }
-
-    // private ntlmPreCall(options: IXHROptions, ) {
-    //     let ntlmOptions = {
-    //         url: options.url,
-    //         username: this.username,
-    //         password: this.password,
-    //         workstation: options['workstation'] || '',
-    //         domain: this.domain
-    //     };
-
-    //     return new Promise<XMLHttpRequest>((resolve, reject) => {
-
-    //         //let type1msg = ntlm.createType1Message(ntlmOptions); //lack of v2
-    //         let type1msg = createType1Message(ntlmOptions.workstation, ntlmOptions.domain); // alternate client - ntlm-client
-
-    //         options.headers['Authorization'] = type1msg;
-    //         options.headers['Connection'] = 'keep-alive';
-
-    //         fetchUrl(options.url, options, (error, meta, body) => {
-    //             if (error) {
-    //                 reject(error);
-    //             }
-    //             else {
-    //                 let xhrResponse: XMLHttpRequest = <any>{
-    //                     response: body,
-    //                     status: meta.status,
-    //                     redirectCount: meta.redirectCount,
-    //                     headers: meta.responseHeaders,
-    //                     finalUrl: meta.finalUrl,
-    //                     responseType: '',
-    //                     statusText: undefined,
-    //                 };
-    //                 resolve(xhrResponse);
-    //             }
-    //         });
-    //     }).then((res: any) => {
-    //         if (!res.headers['www-authenticate'])
-    //             throw new Error('www-authenticate not found on response of second request');
-
-    //         //let type2msg = ntlm.parseType2Message(res.headers['www-authenticate']); //httpntlm
-    //         //let type3msg = ntlm.createType3Message(type2msg, ntlmOptions); //httpntlm
-    //         let type2msg = decodeType2Message(res.headers['www-authenticate']); //with ntlm-client
-    //         let type3msg = createType3Message(type2msg, ntlmOptions.username, ntlmOptions.password, ntlmOptions.workstation, ntlmOptions.domain); //with ntlm-client
-
-    //         delete options.headers['authorization'] // 'fetch' has this wired addition with lower case, with lower case ntlm on server side fails
-    //         delete options.headers['connection'] // 'fetch' has this wired addition with lower case, with lower case ntlm on server side fails
-
-    //         options.headers['Authorization'] = type3msg;
-    //         options.headers['Connection'] = 'Close';
-
-    //         return options;
-    //     });
-    // }
-
-
 }
