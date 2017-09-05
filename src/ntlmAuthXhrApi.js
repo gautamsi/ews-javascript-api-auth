@@ -66,6 +66,8 @@ var ntlmAuthXhrApi = (function () {
                         }
                     }
                 });
+            }).catch(function(err){
+                reject(err);
             });
         });
     };
