@@ -66,7 +66,7 @@ var ntlmAuthXhrApi = (function () {
                         }
                     }
                 });
-            });
+            }, reject);
         });
     };
     ntlmAuthXhrApi.prototype.xhrStream = function (xhroptions, progressDelegate) {
@@ -100,7 +100,7 @@ var ntlmAuthXhrApi = (function () {
                     _this.disconnect();
                     reject(error);
                 });
-            });
+            }, reject);
         });
     };
     ntlmAuthXhrApi.prototype.disconnect = function () {

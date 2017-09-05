@@ -1,6 +1,6 @@
 {
   "name": "ews-javascript-api-auth",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Library to Help with non-Basic Authentication methods with ews-javascript-api package",
   "main": "src/index.js",
   "scripts": {

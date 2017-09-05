@@ -1,7 +1,7 @@
 import { FetchStream, fetchUrl } from 'fetch';
 import * as  Promise from "bluebird";
 import { IXHROptions, IXHRApi, IXHRProgress } from "./ews.partial";
-import {setupXhrResponse} from "./utils";
+import { setupXhrResponse } from "./utils";
 
 import { Agent as httpsAgent } from "https";
 
@@ -76,7 +76,7 @@ export class ntlmAuthXhrApi implements IXHRApi {
                         }
                     }
                 });
-            });
+            }, reject);
         })
     }
 
@@ -118,7 +118,7 @@ export class ntlmAuthXhrApi implements IXHRApi {
                     this.disconnect();
                     reject(error);
                 });
-            });
+            }, reject);
         });
     }
 
