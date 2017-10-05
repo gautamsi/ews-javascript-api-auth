@@ -4,6 +4,7 @@ import { IXHROptions, IXHRApi, IXHRProgress } from "./ews.partial";
 import { setupXhrResponse } from "./utils";
 
 import { Agent as httpsAgent } from "https";
+import { Agent as httpAgent } from "http";
 
 var { createType1Message, decodeType2Message, createType3Message } = require("ntlm-client") //ref: has NTLM v2 support // info: also possible to use this package in node.
 
@@ -45,7 +46,8 @@ export class ntlmAuthXhrApi implements IXHRApi {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
+            agentHttps: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }), //keepaliveAgent
+            agentHttp: new httpAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
@@ -88,7 +90,8 @@ export class ntlmAuthXhrApi implements IXHRApi {
             //payload: xhroptions.data,
             headers: xhroptions.headers,
             method: 'GET',
-            agent: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
+            agentHttps: new httpsAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }), //keepaliveAgent
+            agentHttp: new httpAgent({ keepAlive: true, rejectUnauthorized: !this.allowUntrustedCertificate }) //keepaliveAgent
         }
 
         return new Promise<XMLHttpRequest>((resolve, reject) => {
