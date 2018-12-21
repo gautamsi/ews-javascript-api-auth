@@ -2,6 +2,9 @@
 
 A helper library to support NTLM and Cookies authentication with [ews-javascript-api](https://github.com/gautamsi/ews-javascript-api)
 
+
+> #### Depricated, use https://github.com/ewsjs/xhr
+
 ## Install
 
 `npm install ews-javascript-api-auth --save`
